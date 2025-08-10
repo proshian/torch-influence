@@ -1,5 +1,6 @@
 import abc
 from typing import Any, List, Optional, Union, Iterator, Tuple
+from collections import UserDict
 
 import numpy as np
 import torch
@@ -319,12 +320,12 @@ class BaseInfluenceModule(abc.ABC):
 
     # Data helpers
 
-    def _transfer_to_device(self, batch: Union[torch.Tensor, list, tuple, dict]):
+    def _transfer_to_device(self, batch):
         if isinstance(batch, torch.Tensor):
             return batch.to(self.device)
         elif isinstance(batch, (tuple, list)):
             return type(batch)(self._transfer_to_device(x) for x in batch)
-        elif isinstance(batch, dict):
+        elif isinstance(batch, (dict, UserDict)):
             return {k: self._transfer_to_device(x) for k, x in batch.items()}
         else:
             raise NotImplementedError()
